@@ -1,23 +1,22 @@
 
 # Get the list of Event IDs from my CheatSheet from GitHub
 
-$EventIDs = Invoke-WebRequest -uri "https://github.com/P0w3rChi3f/CheatSheets/blob/master/WindowsEventIDs.md"
+$RawWebContent = Invoke-WebRequest -uri "https://github.com/P0w3rChi3f/CheatSheets/blob/master/WindowsEventIDs.md"
+($RawWebContent.RawContent) | Out-File "$env:TMPDIR/WineventsCheatsheet.txt" 
+$Content = Get-Content "$env:TMPDIR/WineventsCheatsheet.txt" | Select-String -Pattern '^(<td>)[\d|\w].+(</td>)$'
 
-$EventIDs 
+$EventIDs = @()
+$int = 0
 
-$EventIDs.RawContent | out-file ./WineventsCheatsheet.txt 
-
-$tableItems = Get-Content ./WineventsCheatsheet.txt | select-string -pattern "<tr>" -Context 0,3
-
-foreach ($item in $tableItems) {
-    $int = 1
-    foreach ($thing in ($item.ToString().Split([Environment]::NewLine))) {
-        
-        Write-host $thing.trimstart().trim('<tr/d>')
-        $int += 1
-    } # close foreach inner loop
+foreach ($item in $Content) {
+    $item.TrimStart('</start>')
+    Write-Host "$item is at index $int"
+    
+    $int += 1
     
 } # Close Foreach Outter Loop
+
+$EventIDs
 
 
 
