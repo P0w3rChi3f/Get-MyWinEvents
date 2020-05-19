@@ -8,3 +8,4 @@ Get-DownloadWinEvents can now download a text document of Windows event IDs and 
     Things left to do:  
     1. Create a function that can be called
     2. Paramiterize the URL  
+    3. Create a test to switch between envronment variable `dirtmp` and `temp`
