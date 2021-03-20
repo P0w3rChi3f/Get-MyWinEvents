@@ -1,38 +1,28 @@
 
+function Get-WinEventIDList {
+
 # Get the list of Event IDs from my CheatSheet from GitHub
 
 $RawWebContent = Invoke-WebRequest -uri "https://github.com/P0w3rChi3f/CheatSheets/blob/master/WindowsEventIDs.md"
-($RawWebContent.RawContent) | Out-File "$env:TMPDIR/WineventsCheatsheet.txt" 
-$Content = Get-Content "$env:TMPDIR/WineventsCheatsheet.txt" | Select-String -Pattern '^(<td>)[\d|\w].+(</td>)$'
 
-$EventIDs = @()
-$int = 0
+<#
+This line of code takes parsed the webpage down to just the EventID and Definition.  This is done by taking the just grabbing the raw content from the webpage and splitting it on each new line.  Once that is done, it then just grabs each line that starts with <td> and ends with </td>.  This is the table data that holds the data we need.  Then I was able to just grab the line property and trim the <td>
+#>
+$Content = (((($RawWebContent.RawContent).Split("`n") | Select-String -Pattern '^(<td>)[\d|\w].+(</td>)$').Line).TrimStart("<td>")).TrimEnd("</td>")
 
 foreach ($item in $Content) {
-    $item.TrimStart('</start>')
-    Write-Host "$item is at index $int"
-    
-    $int += 1
-    
-} # Close Foreach Outter Loop
+  if ($item -match '^\d') {
+    $ID = $item
+    }
+  else {
+    $WinEventIDs.$ID = $item
 
-$EventIDs
+  } 
+  
+}# Close Foreach Outter Loop
+
+$WinEventIDs
+
+} #Close Function
 
 
-
-
-<# .ToString().Split([Environment]::NewLine) 
-
-$int = 1
-foreach ($thing in ($item.ToString().Split([Environment]::NewLine))) { 
-    Write-Host "Line $int" + " " + $thing
-    $int += 1
-}
-
-switch ($thing) {
-            '<tr>' {$Message = "Delete ,<tr>"}
-            '<td>' {$Message = $thing}
-            '</tr>' {$Message = "Delete </tr>"}
-        default {}
-} # Close switch
-#>

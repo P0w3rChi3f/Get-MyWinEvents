@@ -5,7 +5,7 @@ $RawEventIDs = ((Invoke-WebRequest -Uri $url).RawContent).Split("`n") | Select-O
 # Create a custom EventID Object
  $EventIDs = @()
 
-# Fill the Cusomt EventID
+# Fill the Custom EventID
 foreach ($Item in $RawEventIDs) {
    
     $EventIDs += New-Object -TypeName PSObject -Property @{
